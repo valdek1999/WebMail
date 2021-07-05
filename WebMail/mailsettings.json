@@ -1,0 +1,8 @@
+{
+  "email": "test@gmail.com",
+  "password": "password",
+  "host": "smtp.gmail.com",
+  "port": 465,
+  "useSsl": true
+}
+//config for smtp gmail
