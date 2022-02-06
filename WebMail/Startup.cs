@@ -17,6 +17,7 @@ using WebMail.Config;
 using WebMail.Data;
 using WebMail.Models;
 using WebMail.Repository;
+using WebMail.Services;
 
 namespace WebMail
 {
@@ -50,7 +51,8 @@ namespace WebMail
             services.AddDbContext<WebMailDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.Configure<MailConfig>(ConfigurationSMTP);
+            services.Configure<MailConfig>(ConfigurationSMTP);           
+            services.AddSingleton<IMailService, MailService>();
             services.AddScoped<IRepository<Mail>, MailRepository>();
             
         }

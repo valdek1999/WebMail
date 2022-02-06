@@ -23,12 +23,12 @@ namespace WebMail.Data
         public DbSet<Mail> Recipient { get; set; }
         public WebMailDbContext(DbContextOptions<WebMailDbContext> options): base(options)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+           // base.OnModelCreating(modelBuilder);
         }
     }
 }

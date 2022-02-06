@@ -12,11 +12,11 @@ namespace WebMail.Models
     /// <summary>
     /// POST request body class
     /// </summary>
-    public struct JsonMail
+    public class MailBody
     {
-        public String Subject { get; set; }
-        public String Body { get; set; }
-        public List<String> Recipients { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
+        public List<string> Recipients { get; set; }
 
     }
     /// <summary>
@@ -25,13 +25,29 @@ namespace WebMail.Models
     public class Mail
     {
         public int Id { get; set; }
-        public String Subject { get; set; }
-        public String Body { get; set; }
-        public String Result { get; set; }
-        public String FailedMessage { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
+        public string Result { get; set; }
+        public string FailedMessage { get; set; }
         public DateTime Date { get; set; }
-
         public virtual List<Recipient> Recipients { get; set; }
     }
-    
+
+    /// <summary>
+    /// The class of message recipients
+    /// </summary>
+    public class Recipient
+    {
+        [JsonIgnore]
+        public int Id { get; set; }
+
+        [JsonProperty("recipient")]
+        public string RecipientEmail { get; set; }
+
+        [JsonIgnore]
+        public int MailId { get; set; }
+        [JsonIgnore]
+        public Mail Mail { get; set; }
+    }
+
 }

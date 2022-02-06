@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using WebMail.Data;
 using WebMail.Models;
 using WebMail.Repository;
+using WebMail.Services;
 
 namespace WebMail.Controllers
 {
@@ -20,15 +21,13 @@ namespace WebMail.Controllers
     [Route("api/[controller]")]
     public class MailsController : Controller
     {
-        private IRepository<Mail> _contextMail { get; set; }
+        private IRepository<Mail> _repositoryMail;
+        private IMailService _mailService;
 
-        /// <summary>
-        /// The controller constructor that accepts the database context as input
-        /// </summary>
-        /// <param name="contextMail"></param>
-        public MailsController(IRepository<Mail> contextMail)
+        public MailsController(IRepository<Mail> repositoryMail, IMailService mailService)
         {
-            _contextMail = contextMail;
+            _repositoryMail = repositoryMail;
+            _mailService = mailService;
         }
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace WebMail.Controllers
         [EnableQuery]
         public ActionResult<IEnumerable<Mail>> GetMail()
         {
-            IEnumerable<Mail> mails = _contextMail.All;
+            IEnumerable<Mail> mails = _repositoryMail.All;
             return Ok(mails);
         }
 
@@ -51,26 +50,26 @@ namespace WebMail.Controllers
         [HttpGet("{subject}")]
         public ActionResult<IEnumerable<Mail>> GetMail(string subject)
         {
-            IEnumerable<Mail> mails = _contextMail.FindAll(x => x.Subject == subject);
+            IEnumerable<Mail> mails = _repositoryMail.FindAll(x => x.Subject == subject);
             return Ok(mails);
         }
         /// <summary>
         /// POST request for a new message
         /// </summary>
-        /// <param name="jsMail">json object</param>
+        /// <param name="mailBody">json object</param>
         /// <returns>The Mail entity</returns>
         [HttpPost]
-        public ActionResult<Mail> PostMail(JsonMail jsMail)
+        public ActionResult<Mail> PostMail(MailBody mailBody)
         {
             try
             {
-                var context = _contextMail as MailRepository;
-                Mail mail = context.Add(jsMail).Result;
+                var mail = _mailService.PublishMessage(mailBody).Result;
+                _repositoryMail.Add(mail);
                 return Ok(mail);
             }
-            catch(InvalidCastException ex)
+            catch(Exception ex)
             {
-                return BadRequest(ex);
+                return StatusCode(500, ex);
             }
         }
         
